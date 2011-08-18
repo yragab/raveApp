@@ -1,11 +1,11 @@
 module ApplicationHelper
     
   def title
-    base_title = "Ruby on Rails Rave App"
-    if @title.nil?
-      base_title
+    base_title = "Rave App"
+    if @title.nil? 
+      return base_title
     else
-      base_title + " | " + @title
+      return "#{base_title} | #{@title}"
     end
   end
   
