@@ -3,12 +3,13 @@
 <html>
   <head>
     <title><%= title %></title>
-    <%= csrf_meta_tag %>
-    <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
-    <%= stylesheet_link_tag 'blueprint/print',  :media => 'print' %>
+    <%= render 'layouts/stylesheets' %>
   </head>
   <body>
-  	<h1> <%= title %> </h1>
-    <%= yield %>
+  	<div class='container'>
+		<%= render 'layouts/header'%>
+		<%= render 'layouts/content'%>
+    	<%= render 'layouts/footer'%>
+    </div>
   </body>
 </html>
