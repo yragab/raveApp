@@ -1,5 +1,10 @@
-  		
+
+        		
   		<section class = 'round'>
-  			<h1> <%= title %> </h1>
+  			
+  			<% flash.each do |key, value| %>
+          <div class="flash <%= key %>"><%= value %></div>
+        <% end %>
+        <h1> <%= title %> </h1>
     		<%= yield %>
     	</section>
