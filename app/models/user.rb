@@ -3,8 +3,23 @@ class User < ActiveRecord::Base
   
   attr_accessor :password, :password_confirmation
   attr_accessible :name, :email, :password, :password_confirmation
+  
   # Delete the microposts if user is deleted
   has_many :microposts, :dependent => :destroy
+  # The user's relationships following and followers. Tells that in the relationships table, I am the follower_id.
+  has_many :follower_relationships, :foreign_key => "follower_id", 
+                                    :class_name => "Relationship",
+                                    :dependent => :destroy
+  # To get to the followed users directly. Tells that in the relationships table, the other guy is the followed id. Source is to override pluralization i.e. to have following not followeds
+  has_many :following, :through => :follower_relationships, 
+                       :source => :followed
+  
+  has_many :followed_relationships, :foreign_key => "followed_id",
+                                    :class_name => "Relationship",
+                                    :dependent => :destroy
+                                   
+  has_many :followers, :through => :followed_relationships,
+                       :source => :follower
   
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   
@@ -38,9 +53,20 @@ class User < ActiveRecord::Base
     (user && user.salt == cookie_salt) ? user : nil
   end
   
+  def following?(followed)
+    follower_relationships.find_by_followed_id(followed)
+  end
+
+  def follow!(followed)
+    self.follower_relationships.create!(:followed_id => followed.id)
+  end
+  
+  def unfollow!(followed)
+    follower_relationships.find_by_followed_id(followed).destroy
+  end
+  
   def feed
-    # This is preliminary. See Chapter 12 for the full implementation.
-    Micropost.where("user_id = ?", id)
+    Micropost.from_users_followed_by(self)
   end
 
   private
